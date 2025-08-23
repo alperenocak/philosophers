@@ -6,7 +6,7 @@
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 13:55:20 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/22 16:05:00 by yuocak           ###   ########.fr       */
+/*   Updated: 2025/08/23 13:18:43 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,8 @@ int	trimmed_and_valid_value(int argc, char **argv)
 	return (0);
 }
 
-void	parse_arguments(char **argv, int argc)
+void	parse_arguments(char **argv, int argc, t_philo_data *data)
 {
-	t_philo_data	*data;
-
 	data->number_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
@@ -64,7 +62,7 @@ void	parse_arguments(char **argv, int argc)
 		data->must_eat_count = -1;
 }
 
-int	check_arguments(int argc, char **argv)
+int	check_arguments(int argc, char **argv, t_philo_data *data)
 {
 	if (argc < 5 || argc > 6)
 	{
@@ -75,6 +73,6 @@ int	check_arguments(int argc, char **argv)
 	}
 	if (trimmed_and_valid_value(argc, argv))
 		return (1);
-	parse_arguments(argv, argc);
+	parse_arguments(argv, argc, data);
 	return (0);
 }

@@ -1,31 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   libft_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/22 16:47:05 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/23 13:40:54 by yuocak           ###   ########.fr       */
+/*   Created: 2025/08/22 21:18:21 by yuocak            #+#    #+#             */
+/*   Updated: 2025/08/23 13:17:12 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <stdlib.h>
 
-void	clean_mutex(t_philo_data *data)
+int	ft_atoi(const char *str)
 {
+	int	result;
+	int	sign;
 	int	i;
 
+	result = 0;
+	sign = 1;
 	i = 0;
-	while (i < data->number_philo)
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-')
 	{
-		pthread_mutex_destroy(&data->forks[i]);
+		sign = -1;
 		i++;
 	}
-	pthread_mutex_destroy(&data->print_lock);
-	pthread_mutex_destroy(&data->death_lock);
-	pthread_mutex_destroy(&data->meal_lock);
-	free(data->forks);
-	free(data->philos);
+	else if (str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result *= 10;
+		result += str[i] - 48;
+		i++;
+	}
+	result *= sign;
+	return (result);
 }
