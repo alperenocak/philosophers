@@ -6,11 +6,12 @@
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/22 16:01:13 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/23 13:40:37 by yuocak           ###   ########.fr       */
+/*   Updated: 2025/08/23 16:24:23 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -36,6 +37,7 @@ int	init_philo(t_philo_data *data)
 		data->philos[i].id = i + 1;
 		data->philos[i].eaten_count = 0;
 		data->philos[i].last_meal_time = current_time;
+		data->philos[i].data = data; // Bu satır eksikti!
 		if (data->philos[i].id % 2 == 1)
 		{
 			data->philos[i].left_fork = &data->forks[(i + 1)
@@ -47,6 +49,12 @@ int	init_philo(t_philo_data *data)
 			data->philos[i].left_fork = &data->forks[i];
 			data->philos[i].right_fork = &data->forks[(i + 1)
 				% data->number_philo];
+		}
+		// Debug: Fork pointer'larını kontrol et
+		if (!data->philos[i].left_fork || !data->philos[i].right_fork)
+		{
+			printf("Error: Philosopher %d has NULL fork pointer!\n", i + 1);
+			return (1);
 		}
 		i++;
 	}

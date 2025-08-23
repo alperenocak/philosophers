@@ -6,7 +6,7 @@
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 13:46:31 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/23 15:47:55 by yuocak           ###   ########.fr       */
+/*   Updated: 2025/08/23 16:31:21 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ void	*monitor_thread(void *arg)
 }
 void	*philo_routine(void *arg)
 {
-	t_philo_data	*philo;
+	t_philo	*philo;
 
-	philo = (t_philo_data *)arg;
-	while (philo->simulation_running == 0)
+	philo = (t_philo *)arg;
+	while (philo->data->simulation_running)
 	{
 		eating(philo);
 		sleeping(philo);
@@ -38,17 +38,21 @@ int	join(t_philo_data *data)
 {
 	int	i;
 
+	i = 0;
 	while (i < data->number_philo)
 	{
 		if (pthread_join(data->philos[i].thread, NULL) != 0)
 		{
-			// hata kontorlü yapppp
+			printf("Error joining philosopher thread %d\n", i);
 			return (1);
 		}
 		i++;
 	}
 	if (pthread_join(data->monitor_thread, NULL) != 0)
+	{
+		printf("Error joining monitor thread\n");
 		return (1);
+	}
 	return (0);
 }
 
@@ -59,6 +63,7 @@ int	start_sim(t_philo_data *data)
 	i = 0;
 	data->simulation_running = 1;
 	data->start_time = get_time() * 1000; // Başlangıç zamanını set et
+	// Debug: Fork pointer'larını kontrol et
 	while (i < data->number_philo)
 	{
 		data->philos[i].last_meal_time = data->start_time;
@@ -77,6 +82,7 @@ int	start_sim(t_philo_data *data)
 	}
 	if (join(data))
 	{
+		printf("join\n");
 		return (1);
 	}
 	return (0);

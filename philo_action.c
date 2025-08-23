@@ -6,7 +6,7 @@
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/23 14:50:11 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/23 16:13:09 by yuocak           ###   ########.fr       */
+/*   Updated: 2025/08/23 16:29:00 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,11 @@ void	sensitive_sleep(t_philo_data *philo, long long sleep_time)
 
 void	take_forks(t_philo *philo)
 {
+	if (!philo || !philo->left_fork || !philo->right_fork)
+	{
+		printf("Error: NULL fork pointer!\n");
+		return ;
+	}
 	if (philo->id % 2 == 1)
 	{
 		pthread_mutex_lock(philo->right_fork);
@@ -51,52 +56,51 @@ void	put_forks(t_philo *philo)
 {
 	if (philo->id % 2 == 1)
 	{
-		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
+		pthread_mutex_unlock(philo->right_fork);
 	}
 	else
 	{
-		pthread_mutex_unlock(philo->left_fork);
 		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
 	}
 }
 
-void	eating(t_philo_data *philo)
+void	eating(t_philo *philo)
 {
-	take_forks(philo->philos);
-	print_status(philo->philos, "is eating");
-	pthread_mutex_lock(&philo->meal_lock);
-	philo->philos->last_meal_time = get_time() * 1000;
-	pthread_mutex_unlock(&philo->meal_lock);
-	sensitive_sleep(philo, philo->time_to_eat);
-	philo->philos->eaten_count++;
-	put_forks(philo->philos);
+	take_forks(philo);
+	print_status(philo, "is eating");
+	pthread_mutex_lock(&philo->data->meal_lock);
+	philo->last_meal_time = get_time() * 1000;
+	pthread_mutex_unlock(&philo->data->meal_lock);
+	sensitive_sleep(philo->data, philo->data->time_to_eat * 1000);
+	philo->eaten_count++;
+	put_forks(philo);
 }
 
-void	think(t_philo_data *philo)
+void	think(t_philo *philo)
 {
 	long long	think_time;
 
-	think_time = (philo->time_to_eat - philo->time_to_sleep) / 2;
+	print_status(philo, "is thinking");
+	think_time = (philo->data->time_to_eat - philo->data->time_to_sleep) / 2;
 	if (think_time > 0)
-		sensitive_sleep(philo, think_time);
-	while (!forks_avail(philo->philos) && philo->simulation_running)
-		sensitive_sleep(philo, 100);
+		sensitive_sleep(philo->data, think_time * 1000);
+	while (!forks_avail(philo) && philo->data->simulation_running)
+		sensitive_sleep(philo->data, 100);
 }
 
-void	sleeping(t_philo_data *philo)
+void	sleeping(t_philo *philo)
 {
 	long long	start;
 
-	pthread_mutex_lock(&philo->print_lock);
-	printf("%lld %d is sleeping\n", (get_time() * 1000 - philo->start_time)
-		/ 1000, philo->philos->id);
-	pthread_mutex_unlock(&philo->print_lock);
+	print_status(philo, "is sleeping");
+	sensitive_sleep(philo->data, philo->data->time_to_sleep * 1000);
 	start = get_time() * 1000;
-	while ((get_time() * 1000 - start) < philo->time_to_sleep)
+	while ((get_time() * 1000 - start) < philo->data->time_to_sleep)
 	{
 		usleep(200);
-		if (philo->simulation_running)
+		if (philo->data->simulation_running)
 			break ;
 	}
 }

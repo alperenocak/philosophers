@@ -6,7 +6,7 @@
 /*   By: yuocak <yuocak@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/21 16:01:03 by yuocak            #+#    #+#             */
-/*   Updated: 2025/08/23 16:00:18 by yuocak           ###   ########.fr       */
+/*   Updated: 2025/08/23 16:30:17 by yuocak           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int						forks_avail(t_philo *philo);
 void					sensitive_sleep(t_philo_data *philo,
 							long long sleep_time);
 
-void					eating(t_philo_data *philo);
-void					think(t_philo_data *philo);
-void					sleeping(t_philo_data *philo);
+void					eating(t_philo *philo);
+void					think(t_philo *philo);
+void					sleeping(t_philo *philo);
 #endif
